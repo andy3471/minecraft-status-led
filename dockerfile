@@ -1,4 +1,4 @@
-FROM node:14
+FROM hypriot/rpi-node:8.1.3-onbuild
 
 # Create app directory
 WORKDIR /usr/src/app

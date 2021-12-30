@@ -61,6 +61,7 @@ function setLights(color) {
 function status() {
 util.status(process.env.SERVER, { port: parseInt(process.env.PORT, 10) }) // port is default 25565
     .then((response) => {
+	console.log(response)
       if (response.onlinePlayers >= parseInt(process.env.EMERALD, 10) ) {
 		console.log('emerald');
         setLights(color(66,238,130));
@@ -72,11 +73,11 @@ util.status(process.env.SERVER, { port: parseInt(process.env.PORT, 10) }) // por
         setLights(color(239,202,53));
       } else {
 		console.log('iron');
-		setLights(color(216,175,147));
+		setLights(color(181,154,136));
       };
     })
     .catch((error) => {
-      console.log(error);
+		console.log(error)
       console.log('redstone');
 	  setLights(color(255,0,0));
     });
