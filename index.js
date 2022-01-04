@@ -2,13 +2,15 @@ const util = require('minecraft-server-util');
 require('dotenv').config();
 
 var ws281x = require('rpi-ws281x-native');
-
-var NUM_LEDS = parseInt(24, 10),
+  NUM_LEDS = parseInt(24, 10),
   pixelData = new Uint32Array(NUM_LEDS);
-
-var brightness = 128;
-
-var lastPlayerCount = 0;
+  brightness = 128;
+  lastPlayerCount = 0;
+  signals = {
+    'SIGINT': 2,
+    'SIGTERM': 15
+  };
+  currentTime = new Date().getTime();
 
 ws281x.init(NUM_LEDS);
 
@@ -19,11 +21,6 @@ var lightsOff = function () {
   ws281x.render(pixelData);
   ws281x.reset();
 }
-
-var signals = {
-  'SIGINT': 2,
-  'SIGTERM': 15
-};
 
 function shutdown(signal, value) {
   console.log('Stopped by ' + signal);
@@ -37,13 +34,8 @@ Object.keys(signals).forEach(function (signal) {
   });
 });
 
-// ---- animation-loop
 var offset = 0;
 
-
-
-
-// generate integer from RGB value
 function color(r, g, b) {
   r = r * brightness / 255;
   g = g * brightness / 255;
@@ -61,14 +53,11 @@ function setLights(color) {
 }
 
 function status() {
-
   util.status(process.env.SERVER, { port: parseInt(process.env.PORT, 10) }) // port is default 25565
     .then((response) => {
-
-	if (lastPlayerCount == response.onlinePlayers) {
-		return
-	}
-
+      if (lastPlayerCount == response.onlinePlayers) {
+        return
+      }
 	    lastPlayerCount = response.onlinePlayers
 
       if (response.onlinePlayers >= parseInt(process.env.DIAMOND, 10) ) {
