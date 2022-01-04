@@ -66,7 +66,7 @@ function status() {
         setLights(color(139,244,227));
       } else if (response.onlinePlayers >= parseInt(process.env.EMERALD, 10) ) {
         console.log('emerald');
-        setLights(color(66,238,130));
+        setLights(color(66,256,130));
       } else if (response.onlinePlayers >= parseInt(process.env.GOLD, 10) ) {
         console.log('gold');
         setLights(color(239,202,53));
@@ -78,10 +78,10 @@ function status() {
         setLights(color(216,175,147));
       } else if (response.onlinePlayers >= parseInt(process.env.COPPER, 10) ) {
         console.log('copper');
-        setLights(color(216,175,147));
+        setLights(color(151,85,46));
       } else {
         console.log('coal');
-        setLights(color(216,175,147));
+        setLights(color(32,32,32));
       };
     })
     .catch((error) => {
@@ -95,5 +95,5 @@ function run() {
   setInterval(status, parseInt(process.env.POLLRATE, 10));
 }
 
-setLights(color(0,0,255));
+setLights(color(151,0,255));
 run();
