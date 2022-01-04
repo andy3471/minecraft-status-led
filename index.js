@@ -4,13 +4,15 @@ require('dotenv').config();
 var ws281x = require('rpi-ws281x-native');
   NUM_LEDS = parseInt(24, 10),
   pixelData = new Uint32Array(NUM_LEDS);
-  brightness = 128;
+  brightness = parseInt(process.env.DAY_BRIGHTNESS, 10);
   lastPlayerCount = 0;
   signals = {
     'SIGINT': 2,
     'SIGTERM': 15
   };
   currentTime = new Date().getTime();
+  isDay = true;
+  hasDaytimeChanged = false;
 
 ws281x.init(NUM_LEDS);
 
@@ -53,12 +55,31 @@ function setLights(color) {
 }
 
 function status() {
+  if (process.env.NIGHT_DIMMING == 'true') { 
+	 let hours = new Date().getHours();
+	 let isDayTime = hours > parseInt(process.env.NIGHT_DIMMING_END_HOUR, 10) && hours < parseInt(process.env.NIGHT_DIMMING_START_HOUR);
+
+	  if (isDay !== isDayTime) {
+		  isDay = isDayTime;
+      hasDaytimeChanged = true;
+
+		  if (isDayTime) {
+			console.log('Day Mode');
+			brightness = parseInt(process.env.DAY_BRIGHTNESS, 10);
+		  } else {
+			console.log('Night mode')
+			brightness = parseInt(process.env.NIGHT_BRIGHTNESS, 10);
+		  }
+	  }
+  }
+
   util.status(process.env.SERVER, { port: parseInt(process.env.PORT, 10) }) // port is default 25565
     .then((response) => {
-      if (lastPlayerCount == response.onlinePlayers) {
+      if (lastPlayerCount == response.onlinePlayers && !hasDaytimeChanged) {
         return
       }
 	    lastPlayerCount = response.onlinePlayers
+      hasDaytimeChanged = false;
 
       if (response.onlinePlayers >= parseInt(process.env.DIAMOND, 10) ) {
         console.log('diamond');
