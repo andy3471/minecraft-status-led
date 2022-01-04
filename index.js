@@ -8,6 +8,8 @@ var NUM_LEDS = parseInt(24, 10),
 
 var brightness = 128;
 
+var lastPlayerCount = 0;
+
 ws281x.init(NUM_LEDS);
 
 var lightsOff = function () {
@@ -59,8 +61,16 @@ function setLights(color) {
 }
 
 function status() {
+
   util.status(process.env.SERVER, { port: parseInt(process.env.PORT, 10) }) // port is default 25565
     .then((response) => {
+
+	if (lastPlayerCount == response.onlinePlayers) {
+		return
+	}
+
+	    lastPlayerCount = response.onlinePlayers
+
       if (response.onlinePlayers >= parseInt(process.env.DIAMOND, 10) ) {
         console.log('diamond');
         setLights(color(139,244,227));
